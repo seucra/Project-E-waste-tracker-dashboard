@@ -1,7 +1,7 @@
 # 🧮 Comprehensive Audit & Mathematical Proof Report: The 20.5 Score & Collection Paradox
 
 **Document Reference:** `report2.md`  
-**Prepared by:** Khan Rayed, S. T. Ahmed, and Abaan Mhaisker  
+**Prepared by:** S. T. Ahmed  
 **Dataset Reference:** `State_EWaste_Tracker_Final.xlsx`  
 **Regulatory Framework:** CPCB E-Waste (Management) Rules, 2022 Framework  
 **Portal:** `https://project.seucra.tech`<!-- AI Assistance Mark: Built with AI telemetry & analytical assistance (Antigravity Agent) -->  

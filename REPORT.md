@@ -1,6 +1,6 @@
 # 📊 Comprehensive Analytical Report: Uttar Pradesh State E-Waste Management & Recycling Scorecard (2025)
 
-**Prepared by:** Khan Rayed, S. T. Ahmed, and Abaan Mhaisker  
+**Prepared by:** S. T. Ahmed  
 **Prepared for:** State Pollution Control Board (UPPCB) & Central Pollution Control Board (CPCB)  
 **Regulatory Framework:** E-Waste (Management) Rules, 2022 (Schedule I & CPCB Guidelines)  
 **Dataset Reference:** `State_EWaste_Tracker_Final.xlsx`  
