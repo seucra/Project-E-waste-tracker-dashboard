@@ -27,13 +27,20 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
-      - name: Add CNAME
-        run: echo "project.seucra.tech" > CNAME
+      - name: Prepare dist bundle
+        run: |
+          mkdir -p dist
+          cp index.html dist/
+          cp REPORT.md dist/
+          cp State_EWaste_Tracker_Final.xlsx dist/
+          cp -r css dist/
+          cp -r js dist/
+          echo "project.seucra.tech" > dist/CNAME
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: '.'
+          path: './dist'
 
       - name: Deploy to GitHub Pages
         id: deployment

@@ -1,0 +1,89 @@
+/* ==========================================================================
+   BLOOD DESIGN SYSTEM TOKENS (schemes.md)
+   ========================================================================== */
+
+:root {
+  /* Surface & Background Hierarchy */
+  --bg-base: #130d0a;
+  --bg-surface: #1a110e;
+  --bg-container: #211713;
+  --bg-container-high: #281d19;
+  --bg-container-highest: #30231e;
+  
+  /* Typography & Text Shades */
+  --text-primary: #f9e0d8;
+  --text-secondary: #bca79f;
+  --text-muted: #84716b;
+  
+  /* Borders & Outlines */
+  --border-color: #54443f;
+  --outline: #84716b;
+  
+  /* Primary Coral / Amber Accents */
+  --accent-primary: #f8b89f;
+  --accent-primary-dim: #e9aa92;
+  --accent-primary-container: #764634;
+  --on-primary-container: #ffdccf;
+  
+  /* Secondary Warm Terracotta Accents */
+  --accent-secondary: #e7beaf;
+  --accent-secondary-container: #50352a;
+  
+  /* Tertiary Gold Accent */
+  --accent-tertiary: #ffecc7;
+  
+  /* Status Colors */
+  --color-error: #fa746f;
+  --color-error-container: #871f21;
+  --color-error-text: #ff9993;
+  
+  --color-success: #b5ccba;
+  --color-success-container: #374b3e;
+  --color-success-text: #d1e9d6;
+  
+  --color-warning: #ffbfa5;
+  --color-warning-container: #50352a;
+
+  /* Border Radii & Effects */
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  
+  --shadow-glow: 0 0 25px rgba(248, 184, 159, 0.12);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+}
+
+/* Base Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  line-height: 1.5;
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(248, 184, 159, 0.07) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(118, 70, 52, 0.1) 0px, transparent 50%);
+  background-attachment: fixed;
+}
+
+/* Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-base);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--bg-container-highest);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-primary-container);
+}

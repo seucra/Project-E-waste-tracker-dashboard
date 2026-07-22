@@ -1,0 +1,228 @@
+/* ==========================================================================
+   CARDS, TABLES, BADGES, AND COMPONENT STYLES
+   ========================================================================== */
+
+/* Cards */
+.kpi-card {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+  box-shadow: var(--shadow-card);
+}
+
+.kpi-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent-primary);
+}
+
+.kpi-title {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.kpi-value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.kpi-subtitle {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.kpi-accent {
+  color: var(--accent-primary);
+}
+
+.card {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-card);
+  margin-bottom: 1.5rem;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.card-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 1.2rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--accent-primary-container);
+  color: var(--on-primary-container);
+  border-color: var(--accent-primary);
+}
+.btn-primary:hover {
+  background: var(--accent-primary);
+  color: var(--bg-base);
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-secondary {
+  background: var(--bg-container-high);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+.btn-secondary:hover {
+  background: var(--bg-container-highest);
+  border-color: var(--accent-secondary);
+}
+
+/* Data Tables */
+.data-table-wrapper {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.875rem;
+  text-align: left;
+}
+
+.data-table th {
+  background: var(--bg-container-high);
+  color: var(--accent-secondary);
+  padding: 0.85rem 1rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border-bottom: 2px solid var(--border-color);
+}
+
+.data-table td {
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-primary);
+}
+
+.data-table tr:hover {
+  background: var(--bg-container-highest);
+}
+
+/* Badges & Status Indicators */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.badge-critical {
+  background: var(--color-error-container);
+  color: var(--color-error-text);
+  border: 1px solid var(--color-error);
+}
+
+.badge-success {
+  background: var(--color-success-container);
+  color: var(--color-success-text);
+  border: 1px solid var(--color-success);
+}
+
+.badge-warning {
+  background: var(--color-warning-container);
+  color: var(--accent-primary);
+  border: 1px solid var(--accent-primary);
+}
+
+/* Target Simulator Row & Controls */
+.sim-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  align-items: center;
+  padding: 0.75rem 0;
+  border-bottom: 1px dashed var(--border-color);
+}
+
+.sim-input {
+  background: var(--bg-base);
+  border: 1px solid var(--border-color);
+  color: var(--accent-primary);
+  font-family: 'JetBrains Mono', monospace;
+  padding: 0.4rem 0.75rem;
+  border-radius: var(--radius-sm);
+  width: 100%;
+}
+.sim-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 8px rgba(248, 184, 159, 0.3);
+}
+
+/* Report Viewer Container */
+.report-box {
+  background: var(--bg-container);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  padding: 2.5rem;
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.report-box h1, .report-box h2, .report-box h3 {
+  color: var(--accent-primary);
+  margin-top: 1.5rem;
+  margin-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.3rem;
+}
+
+.report-box p {
+  margin-bottom: 1rem;
+  color: var(--text-primary);
+}
+
+.report-box ul, .report-box ol {
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.report-box blockquote {
+  background: var(--bg-container-high);
+  border-left: 4px solid var(--accent-primary);
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+}
