@@ -1,5 +1,5 @@
 /* ==========================================================================
-   MAIN APPLICATION CONTROLLER & TAB NAVIGATION
+   MAIN APPLICATION CONTROLLER, NAVIGATION & SEARCH ENGINE
    ========================================================================== */
 
 function switchTab(tabId, evt) {
@@ -8,6 +8,7 @@ function switchTab(tabId, evt) {
   
   if (evt && evt.target) {
     evt.target.classList.add('active');
+    evt.target.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
   }
   const targetContent = document.getElementById(`tab-${tabId}`);
   if (targetContent) {
@@ -33,11 +34,21 @@ function renderScorecardTable() {
   });
 }
 
-function renderDistrictTable() {
+function renderDistrictTable(filterQuery = '') {
   const tbody = document.getElementById('districtTableBody');
   if (!tbody) return;
   tbody.innerHTML = '';
-  districtData.forEach(d => {
+  
+  const filtered = districtData.filter(d => 
+    d.name.toLowerCase().includes(filterQuery.toLowerCase())
+  );
+
+  if (filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colSpan="4" style="text-align:center; color:var(--text-muted);">No districts matching "${filterQuery}"</td></tr>`;
+    return;
+  }
+
+  filtered.forEach(d => {
     tbody.innerHTML += `
       <tr>
         <td><strong>${d.name}</strong></td>
@@ -47,6 +58,10 @@ function renderDistrictTable() {
       </tr>
     `;
   });
+}
+
+function filterDistricts(query) {
+  renderDistrictTable(query);
 }
 
 async function loadReport() {
@@ -69,6 +84,26 @@ async function loadReport() {
   } catch(e) {
     area.innerHTML = '<p>Could not load REPORT.md file directly.</p>';
   }
+}
+
+function printReport() {
+  const reportContent = document.getElementById('reportRenderArea').innerHTML;
+  const printWindow = window.open('', '_blank');
+  printWindow.document.write(`
+    <html>
+      <head>
+        <title>Uttar Pradesh E-Waste Executive Report</title>
+        <style>
+          body { font-family: sans-serif; padding: 20px; color: #111; line-height: 1.6; }
+          h1, h2, h3 { color: #871f21; border-bottom: 1px solid #ccc; }
+          blockquote { background: #f4f4f4; padding: 10px; border-left: 4px solid #871f21; }
+        </style>
+      </head>
+      <body>${reportContent}</body>
+    </html>
+  `);
+  printWindow.document.close();
+  printWindow.print();
 }
 
 window.addEventListener('DOMContentLoaded', () => {

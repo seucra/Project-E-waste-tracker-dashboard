@@ -1,11 +1,15 @@
 /* ==========================================================================
-   CHART.JS VISUALIZATION RENDERERS
+   CHART.JS VISUALIZATION RENDERERS (RESPONSIVE TOUCH & FLUID ASPECT RATIOS)
    ========================================================================== */
 
 let scorecardChartInstance = null;
+let districtChartInstance = null;
 
 function initScorecardChart() {
-  const ctx = document.getElementById('scorecardChart').getContext('2d');
+  const canvas = document.getElementById('scorecardChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
   scorecardChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
@@ -29,26 +33,40 @@ function initScorecardChart() {
     },
     options: {
       responsive: true,
+      maintainAspectRatio: false,
       plugins: {
-        legend: { labels: { color: '#f9e0d8' } }
+        legend: {
+          labels: {
+            color: '#f9e0d8',
+            font: { size: 11 }
+          }
+        },
+        tooltip: {
+          padding: 10,
+          titleFont: { size: 12 },
+          bodyFont: { size: 12 }
+        }
       },
       scales: {
-        x: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } },
-        y: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } }
+        x: { ticks: { color: '#bca79f', font: { size: 10 } }, grid: { color: '#281d19' } },
+        y: { ticks: { color: '#bca79f', font: { size: 10 } }, grid: { color: '#281d19' } }
       }
     }
   });
 }
 
 function initDistrictChart() {
-  const ctx = document.getElementById('districtChart').getContext('2d');
-  new Chart(ctx, {
+  const canvas = document.getElementById('districtChart');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  
+  districtChartInstance = new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: districtData.slice(0, 7).map(d => d.name),
+      labels: districtData.slice(0, 7).map(d => d.name.split(' ')[0]),
       datasets: [{
-        label: 'Population (Impact Scale)',
-        data: districtData.slice(0, 7).map(d => d.pop),
+        label: 'Population (Millions)',
+        data: districtData.slice(0, 7).map(d => (d.pop / 1000000).toFixed(2)),
         backgroundColor: '#764634',
         borderColor: '#f8b89f',
         borderWidth: 1
@@ -57,10 +75,20 @@ function initDistrictChart() {
     options: {
       indexAxis: 'y',
       responsive: true,
-      plugins: { legend: { labels: { color: '#f9e0d8' } } },
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#f9e0d8', font: { size: 11 } } },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return `Population: ${(context.raw * 1000000).toLocaleString()}`;
+            }
+          }
+        }
+      },
       scales: {
-        x: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } },
-        y: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } }
+        x: { ticks: { color: '#bca79f', font: { size: 10 } }, grid: { color: '#281d19' } },
+        y: { ticks: { color: '#bca79f', font: { size: 10 } }, grid: { color: '#281d19' } }
       }
     }
   });

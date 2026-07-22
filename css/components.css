@@ -1,5 +1,5 @@
 /* ==========================================================================
-   CARDS, TABLES, BADGES, AND COMPONENT STYLES
+   CARDS, TABLES, BADGES, AND SIMULATOR RESPONSIVE STYLES
    ========================================================================== */
 
 /* Cards */
@@ -7,9 +7,12 @@
   background: var(--bg-container);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 1.25rem;
+  padding: 1rem;
   transition: transform 0.2s ease, border-color 0.2s ease;
   box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .kpi-card:hover {
@@ -18,23 +21,24 @@
 }
 
 .kpi-title {
-  font-size: 0.8rem;
+  font-size: 0.725rem;
   color: var(--text-secondary);
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  margin-bottom: 0.5rem;
+  margin-bottom: 0.35rem;
 }
 
 .kpi-value {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1.75rem;
+  font-size: clamp(1.2rem, 3.5vw, 1.65rem);
   font-weight: 800;
   color: var(--text-primary);
-  margin-bottom: 0.25rem;
+  margin-bottom: 0.2rem;
+  word-break: break-word;
 }
 
 .kpi-subtitle {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-muted);
 }
 
@@ -46,42 +50,53 @@
   background: var(--bg-container);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 1.5rem;
+  padding: 1.25rem;
   box-shadow: var(--shadow-card);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: 1rem;
+    border-radius: var(--radius-sm);
+  }
 }
 
 .card-header {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.25rem;
-  padding-bottom: 0.75rem;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  padding-bottom: 0.6rem;
   border-bottom: 1px solid var(--border-color);
 }
 
 .card-title {
-  font-size: 1.1rem;
+  font-size: clamp(0.95rem, 2.5vw, 1.1rem);
   font-weight: 700;
   color: var(--text-primary);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
 }
 
 /* Buttons */
 .btn {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
-  padding: 0.6rem 1.2rem;
-  font-size: 0.85rem;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1rem;
+  font-size: 0.8rem;
   font-weight: 600;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s ease;
   border: 1px solid transparent;
   text-decoration: none;
+  white-space: nowrap;
 }
 
 .btn-primary {
@@ -108,28 +123,32 @@
 /* Data Tables */
 .data-table-wrapper {
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-color);
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.875rem;
+  font-size: clamp(0.75rem, 1.8vw, 0.85rem);
   text-align: left;
 }
 
 .data-table th {
   background: var(--bg-container-high);
   color: var(--accent-secondary);
-  padding: 0.85rem 1rem;
+  padding: 0.75rem 0.85rem;
   font-weight: 700;
   text-transform: uppercase;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   letter-spacing: 0.05em;
   border-bottom: 2px solid var(--border-color);
+  white-space: nowrap;
 }
 
 .data-table td {
-  padding: 0.85rem 1rem;
+  padding: 0.7rem 0.85rem;
   border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
 }
@@ -141,11 +160,12 @@
 /* Badges & Status Indicators */
 .badge {
   display: inline-block;
-  padding: 0.25rem 0.6rem;
+  padding: 0.2rem 0.5rem;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 700;
   font-family: 'JetBrains Mono', monospace;
+  white-space: nowrap;
 }
 
 .badge-critical {
@@ -166,14 +186,22 @@
   border: 1px solid var(--accent-primary);
 }
 
-/* Target Simulator Row & Controls */
+/* Target Simulator Mobile Responsive Layout */
 .sim-row {
   display: grid;
   grid-template-columns: 2fr 1fr 1fr;
   gap: 1rem;
   align-items: center;
-  padding: 0.75rem 0;
+  padding: 0.85rem 0;
   border-bottom: 1px dashed var(--border-color);
+}
+
+@media (max-width: 640px) {
+  .sim-row {
+    grid-template-columns: 1fr;
+    gap: 0.5rem;
+    padding: 0.85rem 0;
+  }
 }
 
 .sim-input {
@@ -184,6 +212,7 @@
   padding: 0.4rem 0.75rem;
   border-radius: var(--radius-sm);
   width: 100%;
+  font-size: 0.85rem;
 }
 .sim-input:focus {
   outline: none;
@@ -191,38 +220,50 @@
   box-shadow: 0 0 8px rgba(248, 184, 159, 0.3);
 }
 
+/* Search Bar Input */
+.search-input {
+  background: var(--bg-base);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-sm);
+  width: 100%;
+  max-width: 280px;
+}
+.search-input:focus {
+  outline: none;
+  border-color: var(--accent-primary);
+}
+
 /* Report Viewer Container */
 .report-box {
   background: var(--bg-container);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 2.5rem;
-  font-size: 0.95rem;
-  line-height: 1.7;
+  padding: 2rem;
+  font-size: 0.9rem;
+  line-height: 1.65;
 }
 
-.report-box h1, .report-box h2, .report-box h3 {
-  color: var(--accent-primary);
-  margin-top: 1.5rem;
-  margin-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border-color);
-  padding-bottom: 0.3rem;
+@media (max-width: 640px) {
+  .report-box {
+    padding: 1rem;
+    font-size: 0.85rem;
+  }
 }
 
-.report-box p {
-  margin-bottom: 1rem;
-  color: var(--text-primary);
-}
+.report-box h1 { font-size: clamp(1.2rem, 3.5vw, 1.6rem); color: var(--accent-primary); margin-top: 1rem; margin-bottom: 0.75rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3rem; }
+.report-box h2 { font-size: clamp(1.05rem, 3vw, 1.3rem); color: var(--accent-primary); margin-top: 1.25rem; margin-bottom: 0.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 0.2rem; }
+.report-box h3 { font-size: clamp(0.95rem, 2.5vw, 1.1rem); color: var(--accent-secondary); margin-top: 1rem; margin-bottom: 0.4rem; }
 
-.report-box ul, .report-box ol {
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
-}
-
+.report-box p { margin-bottom: 0.85rem; color: var(--text-primary); }
+.report-box ul, .report-box ol { margin-left: 1.25rem; margin-bottom: 0.85rem; }
 .report-box blockquote {
   background: var(--bg-container-high);
   border-left: 4px solid var(--accent-primary);
-  padding: 1rem;
+  padding: 0.75rem 1rem;
   margin-bottom: 1rem;
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  overflow-x: auto;
 }

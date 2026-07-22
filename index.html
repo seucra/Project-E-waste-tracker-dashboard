@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
   <title>State E-Waste Management Tracker | UPPCB & CPCB Telemetry</title>
   <meta name="description" content="State E-Waste Management & Recycling Scorecard Dashboard based on CPCB E-Waste (Management) Rules 2022. Hosted at project.seucra.tech.">
   
@@ -57,7 +57,7 @@
 
       <div class="kpi-card">
         <div class="kpi-title">Annual E-Waste Generation</div>
-        <div class="kpi-value">466,578 <span style="font-size:0.9rem">Tonnes</span></div>
+        <div class="kpi-value">466,578 <span style="font-size:0.8rem">Tonnes</span></div>
         <div class="kpi-subtitle">4.665 × 10⁸ kg Total Est.</div>
       </div>
 
@@ -69,7 +69,7 @@
 
       <div class="kpi-card">
         <div class="kpi-title">Authorized Recycler Capacity</div>
-        <div class="kpi-value">388,000 <span style="font-size:0.9rem">T/Yr</span></div>
+        <div class="kpi-value">388,000 <span style="font-size:0.8rem">T/Yr</span></div>
         <div class="kpi-subtitle">Across 125 Authorized Units</div>
       </div>
 
@@ -80,7 +80,7 @@
       </div>
     </div>
 
-    <!-- Navigation Tabs -->
+    <!-- Navigation Tabs Bar -->
     <div class="nav-tabs">
       <button class="tab-btn active" onclick="switchTab('scorecard', event)">📊 0. Scorecard & Targets</button>
       <button class="tab-btn" onclick="switchTab('generation', event)">🗺️ 1. Generation & Districts</button>
@@ -120,7 +120,9 @@
           <div class="card-header">
             <div class="card-title">📈 Pillar Score Contribution</div>
           </div>
-          <canvas id="scorecardChart" height="230"></canvas>
+          <div class="chart-wrapper">
+            <canvas id="scorecardChart"></canvas>
+          </div>
         </div>
       </div>
 
@@ -128,7 +130,7 @@
       <div class="card">
         <div class="card-header">
           <div class="card-title">⚙️ Target & Benchmark Live Simulator</div>
-          <p style="font-size:0.8rem; color:var(--text-muted)">Adjust targets below to simulate state score changes in real time</p>
+          <p style="font-size:0.75rem; color:var(--text-muted)">Adjust benchmarks to recalculate live scores</p>
         </div>
 
         <div class="sim-row">
@@ -136,7 +138,7 @@
             <strong>Regulatory Compliance Weight Benchmark</strong>
             <div style="font-size:0.75rem; color:var(--text-secondary)">CPCB EPR portal audit target</div>
           </div>
-          <div><input type="number" id="sim-target-4" value="1.0" class="sim-input" onchange="recalculateScore()"></div>
+          <div><input type="number" id="sim-target-4" value="1.0" step="0.1" class="sim-input" onchange="recalculateScore()" onkeyup="recalculateScore()"></div>
           <div><span class="badge badge-success">+15.0 Score</span></div>
         </div>
 
@@ -145,7 +147,7 @@
             <strong>Environmental Monitoring Target</strong>
             <div style="font-size:0.75rem; color:var(--text-secondary)">Monitoring visits for heavy metal soil/water</div>
           </div>
-          <div><input type="number" id="sim-target-6" value="1.0" class="sim-input" onchange="recalculateScore()"></div>
+          <div><input type="number" id="sim-target-6" value="1.0" step="0.1" class="sim-input" onchange="recalculateScore()" onkeyup="recalculateScore()"></div>
           <div><span class="badge badge-warning" id="sim-score-6">+5.0 Score</span></div>
         </div>
 
@@ -154,7 +156,7 @@
             <strong>Awareness Campaigns Target</strong>
             <div style="font-size:0.75rem; color:var(--text-secondary)">School & RWA collection drives planned</div>
           </div>
-          <div><input type="number" id="sim-target-7" value="20.0" class="sim-input" onchange="recalculateScore()"></div>
+          <div><input type="number" id="sim-target-7" value="20.0" step="1.0" class="sim-input" onchange="recalculateScore()" onkeyup="recalculateScore()"></div>
           <div><span class="badge badge-critical" id="sim-score-7">+0.5 Score</span></div>
         </div>
       </div>
@@ -167,14 +169,17 @@
           <div class="card-header">
             <div class="card-title">🗺️ Top District E-Waste Generation</div>
           </div>
-          <canvas id="districtChart" height="240"></canvas>
+          <div class="chart-wrapper">
+            <canvas id="districtChart"></canvas>
+          </div>
         </div>
 
         <div class="card">
           <div class="card-header">
             <div class="card-title">📋 District Generation Inventory Table</div>
+            <input type="text" class="search-input" placeholder="🔍 Search district..." onkeyup="filterDistricts(this.value)">
           </div>
-          <div class="data-table-wrapper" style="max-height: 300px;">
+          <div class="data-table-wrapper" style="max-height: 280px;">
             <table class="data-table">
               <thead>
                 <tr>
@@ -275,8 +280,8 @@
         </div>
         <div class="grid-2col">
           <div>
-            <p style="margin-bottom:1rem; color:var(--text-secondary)">Regulatory Metrics under CPCB Portal (E-Waste Rules 2022):</p>
-            <ul style="list-style:none; line-height:2.2;">
+            <p style="margin-bottom:1rem; color:var(--text-secondary); font-size:0.85rem">Regulatory Metrics under CPCB Portal (E-Waste Rules 2022):</p>
+            <ul style="list-style:none; line-height:2.2; font-size:0.85rem">
               <li>✔️ <strong>National EPR Registered Producers:</strong> 9,956 Producers</li>
               <li>✔️ <strong>Inspections Planned by UPPCB:</strong> 1.0 (Completed)</li>
               <li>✔️ <strong>Inspections Conducted:</strong> 1.0 (Completed)</li>
@@ -350,8 +355,14 @@
 
     <!-- TAB 6: FULL REPORT -->
     <div id="tab-report" class="tab-content">
-      <div class="report-box" id="reportRenderArea">
-        <h2>Loading Executive Report...</h2>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📄 Executive Analytical Report</div>
+          <button class="btn btn-primary" onclick="printReport()">🖨️ Print / Save PDF</button>
+        </div>
+        <div class="report-box" id="reportRenderArea">
+          <h2>Loading Executive Report...</h2>
+        </div>
       </div>
     </div>
 
