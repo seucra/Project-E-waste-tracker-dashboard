@@ -88,6 +88,7 @@
       <button class="tab-btn" onclick="switchTab('compliance', event)">⚖️ 4. Compliance & EPR</button>
       <button class="tab-btn" onclick="switchTab('informal', event)">⚠️ 5 & 6. Informal & Env Safeguards</button>
       <button class="tab-btn" onclick="switchTab('report', event)">📄 Executive Analytical Report</button>
+      <button class="tab-btn" onclick="switchTab('audit', event)">🧮 Score Math Proof (report2.md)</button>
     </div>
 
     <!-- TAB 0: SCORECARD & TARGET SIMULATOR -->
@@ -123,6 +124,25 @@
           <div class="chart-wrapper">
             <canvas id="scorecardChart"></canvas>
           </div>
+        </div>
+      </div>
+
+      <!-- Factual Audit Callout Card: Explaining 20.5 & Collection Paradox -->
+      <div class="card" style="background:var(--bg-container-high); border-color:var(--accent-primary-container);">
+        <div class="card-header">
+          <div class="card-title" style="color:var(--accent-primary)">❓ Factual Audit: How 20.5 is Calculated & The 80% Collection Paradox</div>
+          <button class="btn btn-secondary" onclick="switchTab('audit', event)">View Complete Math Proof (report2.md)</button>
+        </div>
+        <div style="font-size:0.85rem; line-height:1.6; color:var(--text-primary)">
+          <p style="margin-bottom:0.75rem">
+            <strong>1. How is 20.5 derived?</strong><br>
+            State Score = $\sum \min\left(\text{Weight},\ \frac{\text{Achieved}}{\text{Benchmark}} \times \text{Weight}\right)$ across 7 indicators.<br>
+            Regulatory Compliance (15.0 pts) + Environmental Monitoring (5.0 pts) + Awareness (0.5 pts) = <strong>20.5 / 100</strong>.
+          </p>
+          <p>
+            <strong>2. Why is Collection Performance scored 0.0 despite 80.78% physical collection?</strong><br>
+            While <strong>376,896 Tonnes (80.78%)</strong> is physically collected & processed by 125 authorized recyclers (Attero, Sims, Greenex), Pillar 2.0 specifically measures <em>Registered Formal Collection Centers per Million Population</em> logged in Sheet 2 (`2_Collection_Log`). Because district collection centers are currently unlogged (0 logged centers), `Achieved = 0.0`, resulting in a Pillar 2.0 score of 0.0. Formally logging UP's existing recycler drop-off points will instantly unlock <strong>+20.0 points</strong>!
+          </p>
         </div>
       </div>
 
@@ -353,15 +373,28 @@
       </div>
     </div>
 
-    <!-- TAB 6: FULL REPORT -->
+    <!-- TAB 6: FULL EXECUTIVE REPORT -->
     <div id="tab-report" class="tab-content">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">📄 Executive Analytical Report</div>
+          <div class="card-title">📄 Executive Analytical Report (REPORT.md)</div>
           <button class="btn btn-primary" onclick="printReport()">🖨️ Print / Save PDF</button>
         </div>
         <div class="report-box" id="reportRenderArea">
           <h2>Loading Executive Report...</h2>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 7: AUDIT & MATH PROOF REPORT (report2.md) -->
+    <div id="tab-audit" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🧮 Score Math Proof & Collection Paradox Report (report2.md)</div>
+          <button class="btn btn-primary" onclick="printAuditReport()">🖨️ Print Audit PDF</button>
+        </div>
+        <div class="report-box" id="auditReportRenderArea">
+          <h2>Loading Audit Report...</h2>
         </div>
       </div>
     </div>

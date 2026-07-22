@@ -64,11 +64,11 @@ function filterDistricts(query) {
   renderDistrictTable(query);
 }
 
-async function loadReport() {
-  const area = document.getElementById('reportRenderArea');
+async function loadMarkdownFile(filename, elementId) {
+  const area = document.getElementById(elementId);
   if (!area) return;
   try {
-    const res = await fetch('REPORT.md');
+    const res = await fetch(filename);
     if (res.ok) {
       const text = await res.text();
       let html = text
@@ -82,17 +82,25 @@ async function loadReport() {
       area.innerHTML = html;
     }
   } catch(e) {
-    area.innerHTML = '<p>Could not load REPORT.md file directly.</p>';
+    area.innerHTML = `<p>Could not load ${filename} file directly.</p>`;
   }
 }
 
-function printReport() {
-  const reportContent = document.getElementById('reportRenderArea').innerHTML;
+async function loadReport() {
+  await loadMarkdownFile('REPORT.md', 'reportRenderArea');
+}
+
+async function loadAuditReport() {
+  await loadMarkdownFile('report2.md', 'auditReportRenderArea');
+}
+
+function printReportArea(elementId, title) {
+  const reportContent = document.getElementById(elementId).innerHTML;
   const printWindow = window.open('', '_blank');
   printWindow.document.write(`
     <html>
       <head>
-        <title>Uttar Pradesh E-Waste Executive Report</title>
+        <title>${title}</title>
         <style>
           body { font-family: sans-serif; padding: 20px; color: #111; line-height: 1.6; }
           h1, h2, h3 { color: #871f21; border-bottom: 1px solid #ccc; }
@@ -106,10 +114,19 @@ function printReport() {
   printWindow.print();
 }
 
+function printReport() {
+  printReportArea('reportRenderArea', 'Uttar Pradesh E-Waste Executive Report');
+}
+
+function printAuditReport() {
+  printReportArea('auditReportRenderArea', 'Uttar Pradesh E-Waste Audit & Math Proof Report');
+}
+
 window.addEventListener('DOMContentLoaded', () => {
   renderScorecardTable();
   renderDistrictTable();
   initScorecardChart();
   initDistrictChart();
   loadReport();
+  loadAuditReport();
 });

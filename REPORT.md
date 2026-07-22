@@ -95,4 +95,26 @@ The scorecard evaluates seven core performance pillars weighted according to env
 
 ---
 
+## 4. Mathematical Proof of Score (20.5) & Collection Paradox Breakdown
+
+### 4.1 How was the 20.5 Score Calculated?
+The score is the sum of weighted scores earned across 7 indicators:
+$$\text{Score Earned} = \min\left(\text{Max Weight},\ \frac{\text{Achieved Value}}{\text{Benchmark / Target}} \times \text{Max Weight}\right)$$
+
+*   **Generation & Inventory (Pillar 1.0):** $(0.0 / 5.0) \times 15.0 = \mathbf{0.0}$
+*   **Collection Performance (Pillar 2.0):** $(0.0 / 1.0) \times 20.0 = \mathbf{0.0}$
+*   **Formal Recycling & Treatment (Pillar 3.0):** $(0.0 / 1.0) \times 20.0 = \mathbf{0.0}$
+*   **Regulatory Compliance (Pillar 4.0):** $(1.0 / 1.0) \times 15.0 = \mathbf{15.0}$
+*   **Informal Sector Integration (Pillar 5.0):** $(0.0 / 1.0) \times 10.0 = \mathbf{0.0}$
+*   **Environmental & Health Safeguards (Pillar 6.0):** $(0.5 / 1.0) \times 10.0 = \mathbf{5.0}$
+*   **Awareness & Outreach (Pillar 7.0):** $(1.0 / 20.0) \times 10.0 = \mathbf{0.5}$
+*   **TOTAL SCORE:** $0.0 + 0.0 + 0.0 + 15.0 + 0.0 + 5.0 + 0.5 = \mathbf{20.5 / 100.0}$
+
+### 4.2 Why is Collection Scored 0.0 Despite 80.78% Collection Volume?
+*   **Physical Volume Processed:** 376,896.74 Tonnes processed by 125 authorized recyclers (**80.78%** of the 466,578 Tonnes generated).
+*   **Pillar 2.0 Scorecard Metric:** Measures *Registered Formal Collection Centers per Million Population* logged in Sheet 4 (`2_Collection_Log`).
+*   **The Paradox:** Because district-level formal collection centers are not logged (`0` registered centers logged in Sheet 4), the formula computes `Achieved = 0.0`, resulting in a Pillar 2.0 score of `0.0 / 20.0`. Formally logging UP's existing recycler drop-off points will instantly unlock **+20.0 points**, boosting the score to **40.5+**.
+
+---
+
 *Report compiled via State E-Waste Tracker Final Analytics Engine.*

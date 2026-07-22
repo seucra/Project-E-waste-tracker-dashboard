@@ -32,6 +32,7 @@ jobs:
           mkdir -p dist
           cp index.html dist/
           cp REPORT.md dist/
+          cp report2.md dist/
           cp State_EWaste_Tracker_Final.xlsx dist/
           cp -r css dist/
           cp -r js dist/
