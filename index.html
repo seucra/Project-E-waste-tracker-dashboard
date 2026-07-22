@@ -1,0 +1,1038 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>State E-Waste Management Tracker | UPPCB & CPCB Telemetry</title>
+  <meta name="description" content="State E-Waste Management & Recycling Scorecard Dashboard based on CPCB E-Waste (Management) Rules 2022. Hosted at project.seucra.tech.">
+  
+  <!-- Google Fonts: Inter & JetBrains Mono -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+  
+  <!-- Chart.js for Interactive Charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    /* BLOOD DESIGN SYSTEM TOKENS (from schemes.md) */
+    :root {
+      --bg-base: #130d0a;
+      --bg-surface: #1a110e;
+      --bg-container: #211713;
+      --bg-container-high: #281d19;
+      --bg-container-highest: #30231e;
+      
+      --text-primary: #f9e0d8;
+      --text-secondary: #bca79f;
+      --text-muted: #84716b;
+      
+      --border-color: #54443f;
+      --outline: #84716b;
+      
+      --accent-primary: #f8b89f;
+      --accent-primary-dim: #e9aa92;
+      --accent-primary-container: #764634;
+      --on-primary-container: #ffdccf;
+      
+      --accent-secondary: #e7beaf;
+      --accent-secondary-container: #50352a;
+      
+      --accent-tertiary: #ffecc7;
+      
+      --color-error: #fa746f;
+      --color-error-container: #871f21;
+      --color-error-text: #ff9993;
+      
+      --color-success: #b5ccba;
+      --color-success-container: #374b3e;
+      --color-success-text: #d1e9d6;
+      
+      --color-warning: #ffbfa5;
+      --color-warning-container: #50352a;
+
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      
+      --shadow-glow: 0 0 25px rgba(248, 184, 159, 0.12);
+      --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      min-height: 100vh;
+      line-height: 1.5;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(248, 184, 159, 0.07) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(118, 70, 52, 0.1) 0px, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: var(--bg-base);
+    }
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-container-highest);
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-primary-container);
+    }
+
+    /* Container */
+    .app-container {
+      max-width: 1440px;
+      margin: 0 auto;
+      padding: 1.5rem 2rem 3rem 2rem;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      background: rgba(33, 23, 19, 0.75);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-card);
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .brand-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent-primary-container), var(--bg-container-highest));
+      border: 1px solid var(--accent-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: var(--shadow-glow);
+    }
+
+    .brand-title h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .brand-title p {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .domain-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.75rem;
+      background: var(--bg-container-highest);
+      color: var(--accent-primary);
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .score-banner {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      background: var(--color-error-container);
+      border: 1px solid var(--color-error);
+      padding: 0.5rem 1.25rem;
+      border-radius: var(--radius-md);
+      box-shadow: 0 0 15px rgba(250, 116, 111, 0.2);
+    }
+
+    .score-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: var(--color-error-text);
+    }
+
+    .score-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-primary);
+    }
+
+    .score-band {
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: var(--color-error-text);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 1.2rem;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: 1px solid transparent;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--accent-primary-container);
+      color: var(--on-primary-container);
+      border-color: var(--accent-primary);
+    }
+    .btn-primary:hover {
+      background: var(--accent-primary);
+      color: var(--bg-base);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .btn-secondary {
+      background: var(--bg-container-high);
+      color: var(--text-primary);
+      border-color: var(--border-color);
+    }
+    .btn-secondary:hover {
+      background: var(--bg-container-highest);
+      border-color: var(--accent-secondary);
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+      display: flex;
+      gap: 0.5rem;
+      overflow-x: auto;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1.5rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .tab-btn {
+      padding: 0.75rem 1.25rem;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md) var(--radius-md) 0 0;
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-container);
+    }
+
+    .tab-btn.active {
+      color: var(--accent-primary);
+      background: var(--bg-container-high);
+      border-color: var(--accent-primary) var(--accent-primary) transparent var(--accent-primary);
+      box-shadow: var(--shadow-glow);
+    }
+
+    /* KPI Summary Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 2rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-container);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+      box-shadow: var(--shadow-card);
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--accent-primary);
+    }
+
+    .kpi-title {
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .kpi-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.75rem;
+      font-weight: 800;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .kpi-subtitle {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    .kpi-accent {
+      color: var(--accent-primary);
+    }
+
+    /* Main Content Layout */
+    .tab-content {
+      display: none;
+    }
+    .tab-content.active {
+      display: block;
+    }
+
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    @media (max-width: 1024px) {
+      .grid-2col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card {
+      background: var(--bg-container);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-card);
+      margin-bottom: 1.5rem;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    /* Data Tables */
+    .data-table-wrapper {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      text-align: left;
+    }
+
+    .data-table th {
+      background: var(--bg-container-high);
+      color: var(--accent-secondary);
+      padding: 0.85rem 1rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .data-table td {
+      padding: 0.85rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .data-table tr:hover {
+      background: var(--bg-container-highest);
+    }
+
+    /* Badges & Pills */
+    .badge {
+      display: inline-block;
+      padding: 0.25rem 0.6rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .badge-critical {
+      background: var(--color-error-container);
+      color: var(--color-error-text);
+      border: 1px solid var(--color-error);
+    }
+
+    .badge-success {
+      background: var(--color-success-container);
+      color: var(--color-success-text);
+      border: 1px solid var(--color-success);
+    }
+
+    .badge-warning {
+      background: var(--color-warning-container);
+      color: var(--accent-primary);
+      border: 1px solid var(--accent-primary);
+    }
+
+    /* Progress Bar */
+    .progress-bar-bg {
+      height: 8px;
+      background: var(--bg-base);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid var(--border-color);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-primary-container), var(--accent-primary));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    /* Simulator Form Inputs */
+    .sim-row {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 1rem;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px dashed var(--border-color);
+    }
+
+    .sim-input {
+      background: var(--bg-base);
+      border: 1px solid var(--border-color);
+      color: var(--accent-primary);
+      font-family: 'JetBrains Mono', monospace;
+      padding: 0.4rem 0.75rem;
+      border-radius: var(--radius-sm);
+      width: 100%;
+    }
+    .sim-input:focus {
+      outline: none;
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 8px rgba(248, 184, 159, 0.3);
+    }
+
+    /* Report Markdown Container */
+    .report-box {
+      background: var(--bg-container);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 2.5rem;
+      font-size: 0.95rem;
+      line-height: 1.7;
+    }
+
+    .report-box h1, .report-box h2, .report-box h3 {
+      color: var(--accent-primary);
+      margin-top: 1.5rem;
+      margin-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 0.3rem;
+    }
+
+    .report-box p {
+      margin-bottom: 1rem;
+      color: var(--text-primary);
+    }
+
+    .report-box ul, .report-box ol {
+      margin-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .report-box blockquote {
+      background: var(--bg-container-high);
+      border-left: 4px solid var(--accent-primary);
+      padding: 1rem;
+      margin-bottom: 1rem;
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Header -->
+    <header>
+      <div class="brand-section">
+        <div class="brand-icon">♻️</div>
+        <div class="brand-title">
+          <h1>State E-Waste Management Tracker <span class="domain-badge">project.seucra.tech</span></h1>
+          <p>CPCB & NGT E-Waste (Management) Rules 2022 Framework — Uttar Pradesh Telemetry</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="score-banner">
+          <div>
+            <div class="score-label">Live Score</div>
+            <div class="score-band">BAND: CRITICAL</div>
+          </div>
+          <div class="score-value" id="headerScoreDisplay">20.5</div>
+        </div>
+
+        <a href="State_EWaste_Tracker_Final.xlsx" class="btn btn-primary" download>
+          📥 Raw Excel
+        </a>
+      </div>
+    </header>
+
+    <!-- KPI Summary Grid -->
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-title">State Performance Score</div>
+        <div class="kpi-value kpi-accent" id="kpiScore">20.5 / 100</div>
+        <div class="kpi-subtitle">Score Band: Critical (0-44)</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">Annual E-Waste Generation</div>
+        <div class="kpi-value">466,578 <span style="font-size:0.9rem">Tonnes</span></div>
+        <div class="kpi-subtitle">4.665 × 10⁸ kg Total Est.</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">State Collection Rate</div>
+        <div class="kpi-value" style="color:var(--color-success)">80.78%</div>
+        <div class="kpi-subtitle">376,896.74 Tonnes Collected</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">Authorized Recycler Capacity</div>
+        <div class="kpi-value">388,000 <span style="font-size:0.9rem">T/Yr</span></div>
+        <div class="kpi-subtitle">Across 125 Authorized Units</div>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-title">EPR Registered Producers</div>
+        <div class="kpi-value">9,956</div>
+        <div class="kpi-subtitle">CPCB National Portal Active</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="nav-tabs">
+      <button class="tab-btn active" onclick="switchTab('scorecard')">📊 0. Scorecard & Targets</button>
+      <button class="tab-btn" onclick="switchTab('generation')">🗺️ 1. Generation & Districts</button>
+      <button class="tab-btn" onclick="switchTab('recycling')">🏭 3. Recycling Units</button>
+      <button class="tab-btn" onclick="switchTab('compliance')">⚖️ 4. Compliance & EPR</button>
+      <button class="tab-btn" onclick="switchTab('informal')">⚠️ 5 & 6. Informal & Env Safeguards</button>
+      <button class="tab-btn" onclick="switchTab('report')">📄 Executive Analytical Report</button>
+    </div>
+
+    <!-- TAB 0: SCORECARD & TARGET SIMULATOR -->
+    <div id="tab-scorecard" class="tab-content active">
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📊 7 Pillar Scorecard Breakdown</div>
+            <div class="domain-badge">Live Formula Calculation</div>
+          </div>
+          <div class="data-table-wrapper">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Weight</th>
+                  <th>Benchmark</th>
+                  <th>Achieved</th>
+                  <th>Earned Score</th>
+                </tr>
+              </thead>
+              <tbody id="scorecardTableBody">
+                <!-- Javascript populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📈 Pillar Score Contribution</div>
+          </div>
+          <canvas id="scorecardChart" height="230"></canvas>
+        </div>
+      </div>
+
+      <!-- Target Simulator Card -->
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚙️ Target & Benchmark Live Simulator</div>
+          <p style="font-size:0.8rem; color:var(--text-muted)">Adjust targets below to simulate state score changes in real time</p>
+        </div>
+
+        <div class="sim-row">
+          <div>
+            <strong>Regulatory Compliance Weight Benchmark</strong>
+            <div style="font-size:0.75rem; color:var(--text-secondary)">CPCB EPR portal audit target</div>
+          </div>
+          <div><input type="number" id="sim-target-4" value="1.0" class="sim-input" onchange="recalculateScore()"></div>
+          <div><span class="badge badge-success">+15.0 Score</span></div>
+        </div>
+
+        <div class="sim-row">
+          <div>
+            <strong>Environmental Monitoring Target</strong>
+            <div style="font-size:0.75rem; color:var(--text-secondary)">Monitoring visits for heavy metal soil/water</div>
+          </div>
+          <div><input type="number" id="sim-target-6" value="1.0" class="sim-input" onchange="recalculateScore()"></div>
+          <div><span class="badge badge-warning" id="sim-score-6">+5.0 Score</span></div>
+        </div>
+
+        <div class="sim-row">
+          <div>
+            <strong>Awareness Campaigns Target</strong>
+            <div style="font-size:0.75rem; color:var(--text-secondary)">School & RWA collection drives planned</div>
+          </div>
+          <div><input type="number" id="sim-target-7" value="20.0" class="sim-input" onchange="recalculateScore()"></div>
+          <div><span class="badge badge-critical" id="sim-score-7">+0.5 Score</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 1: GENERATION & DISTRICTS -->
+    <div id="tab-generation" class="tab-content">
+      <div class="grid-2col">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🗺️ Top District E-Waste Generation</div>
+          </div>
+          <canvas id="districtChart" height="240"></canvas>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 District Generation Inventory Table</div>
+          </div>
+          <div class="data-table-wrapper" style="max-height: 300px;">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>District</th>
+                  <th>Population</th>
+                  <th>Generated (kg)</th>
+                  <th>Data Source</th>
+                </tr>
+              </thead>
+              <tbody id="districtTableBody">
+                <!-- Javascript populated -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: RECYCLING UNITS -->
+    <div id="tab-recycling" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🏭 Authorized Recyclers & Capacity Breakdown</div>
+          <div class="domain-badge">125 Total Units Registered</div>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Recycler Name</th>
+                <th>Authorization No.</th>
+                <th>District</th>
+                <th>Capacity (T/Yr)</th>
+                <th>Quantity Processed (T)</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Attero Recycling Pvt. Ltd.</strong></td>
+                <td>UPPCB/EWM/NOIDA/01</td>
+                <td>Gautam Buddha Nagar</td>
+                <td>120,000.0</td>
+                <td>96,000.0</td>
+                <td><span class="badge badge-success">Valid</span></td>
+              </tr>
+              <tr>
+                <td><strong>Sims Recycling Solutions India</strong></td>
+                <td>UPPCB/EWM/NOIDA/05</td>
+                <td>Gautam Buddha Nagar</td>
+                <td>35,000.0</td>
+                <td>28,000.0</td>
+                <td><span class="badge badge-success">Valid</span></td>
+              </tr>
+              <tr>
+                <td><strong>Greenex Eco Recycling Pvt. Ltd.</strong></td>
+                <td>UPPCB/EWM/GZB/04</td>
+                <td>Ghaziabad</td>
+                <td>24,000.0</td>
+                <td>18,500.0</td>
+                <td><span class="badge badge-success">Valid</span></td>
+              </tr>
+              <tr>
+                <td><strong>Horizon Recycling Pvt. Ltd.</strong></td>
+                <td>UPPCB/EWM/MBD/02</td>
+                <td>Moradabad</td>
+                <td>18,000.0</td>
+                <td>14,200.0</td>
+                <td><span class="badge badge-success">Valid</span></td>
+              </tr>
+              <tr>
+                <td><strong>Bharat Oil & Waste Management Ltd.</strong></td>
+                <td>UPPCB/EWM/KNP/03</td>
+                <td>Kanpur Nagar</td>
+                <td>15,000.0</td>
+                <td>11,000.0</td>
+                <td><span class="badge badge-success">Valid</span></td>
+              </tr>
+              <tr style="background:var(--bg-container-highest); font-weight:bold;">
+                <td>STATE TOTAL (125 Units)</td>
+                <td>UPPCB State Registry</td>
+                <td>State-Wide</td>
+                <td>388,000.0</td>
+                <td>376,896.74</td>
+                <td><span class="badge badge-warning">Cap Deficit: 78.5k T</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 4: COMPLIANCE -->
+    <div id="tab-compliance" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚖️ EPR & Regulatory Compliance Tracker</div>
+        </div>
+        <div class="grid-2col">
+          <div>
+            <p style="margin-bottom:1rem; color:var(--text-secondary)">Regulatory Metrics under CPCB Portal (E-Waste Rules 2022):</p>
+            <ul style="list-style:none; line-height:2.2;">
+              <li>✔️ <strong>National EPR Registered Producers:</strong> 9,956 Producers</li>
+              <li>✔️ <strong>Inspections Planned by UPPCB:</strong> 1.0 (Completed)</li>
+              <li>✔️ <strong>Inspections Conducted:</strong> 1.0 (Completed)</li>
+              <li>✔️ <strong>Penalties / Show-Cause Issued:</strong> 0 Pending</li>
+            </ul>
+          </div>
+          <div>
+            <div class="score-banner" style="background:var(--color-success-container); border-color:var(--color-success)">
+              <div>
+                <div class="score-label">Regulatory Status</div>
+                <div class="score-band" style="color:var(--color-success-text)">100% COMPLIANT</div>
+              </div>
+              <div class="score-value" style="color:var(--color-success-text)">15.0 / 15.0</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 5: INFORMAL & SAFEGUARDS -->
+    <div id="tab-informal" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">⚠️ Informal Sector Hotspots & Environmental Telemetry</div>
+        </div>
+        <div class="data-table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Hotspot Name</th>
+                <th>District</th>
+                <th>Status</th>
+                <th>Env Result</th>
+                <th>Action Taken</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Moradabad Circuit Hub</strong></td>
+                <td>Moradabad</td>
+                <td><span class="badge badge-critical">NGT Action Plan</span></td>
+                <td>Heavy metals (Pb, Cd, Cr) in Ramganga Riverbed exceed limits</td>
+                <td>Remediation ordered by NGT</td>
+              </tr>
+              <tr>
+                <td><strong>Loni & Seelampur Border Scrap</strong></td>
+                <td>Ghaziabad</td>
+                <td><span class="badge badge-warning">Enforcement Drive</span></td>
+                <td>High particulate & air chemical effluent traces</td>
+                <td>Joint UPPCB & Delhi CPCB anti-pollution zone</td>
+              </tr>
+              <tr>
+                <td><strong>Dasna & Masuri Dismantling Hub</strong></td>
+                <td>Ghaziabad</td>
+                <td><span class="badge badge-warning">Partially Remediated</span></td>
+                <td>Soil contamination near non-compliant units</td>
+                <td>Closure notices issued under Air/Water Acts</td>
+              </tr>
+              <tr>
+                <td><strong>Kanpur Unorganized E-Scrap Market</strong></td>
+                <td>Kanpur Nagar</td>
+                <td><span class="badge badge-critical">Identified</span></td>
+                <td>Unorganized chemical acid leaching</td>
+                <td>Action plan submitted by UPPCB to NGT</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 6: FULL REPORT -->
+    <div id="tab-report" class="tab-content">
+      <div class="report-box" id="reportRenderArea">
+        <!-- Rendered markdown report -->
+        <h2>Loading Executive Report...</h2>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // SCORECARD DATA
+    const scorecardData = [
+      { id: 1, name: "1.0 Generation & Inventory", weight: 15.0, benchmark: 5.0, achieved: 0.0, score: 0.0, status: "Critical" },
+      { id: 2, name: "2.0 Collection Performance", weight: 20.0, benchmark: 1.0, achieved: 0.0, score: 0.0, status: "Critical" },
+      { id: 3, name: "3.0 Formal Recycling & Treatment", weight: 20.0, benchmark: 1.0, achieved: 0.0, score: 0.0, status: "Critical" },
+      { id: 4, name: "4.0 Regulatory Compliance", weight: 15.0, benchmark: 1.0, achieved: 1.0, score: 15.0, status: "Compliant" },
+      { id: 5, name: "5.0 Informal Sector Integration", weight: 10.0, benchmark: 1.0, achieved: 0.0, score: 0.0, status: "Critical" },
+      { id: 6, name: "6.0 Environmental & Health Safeguards", weight: 10.0, benchmark: 1.0, achieved: 0.5, score: 5.0, status: "Partial" },
+      { id: 7, name: "7.0 Awareness & Outreach", weight: 10.0, benchmark: 20.0, achieved: 1.0, score: 0.5, status: "Lagging" }
+    ];
+
+    const districtData = [
+      { name: "Prayagraj (Allahabad)", pop: 5954391, gen: 0 },
+      { name: "Moradabad", pop: 4772006, gen: 0 },
+      { name: "Ghaziabad", pop: 4681645, gen: 0 },
+      { name: "Lucknow", pop: 4589838, gen: 0 },
+      { name: "Kanpur Nagar", pop: 4581268, gen: 0 },
+      { name: "Bareilly", pop: 4448359, gen: 0 },
+      { name: "Gorakhpur", pop: 4440895, gen: 0 },
+      { name: "Agra", pop: 4418797, gen: 0 },
+      { name: "Muzaffarnagar", pop: 4143512, gen: 0 },
+      { name: "Varanasi", pop: 3676841, gen: 0 },
+      { name: "Aligarh", pop: 3673889, gen: 0 },
+      { name: "Saharanpur", pop: 3466382, gen: 0 },
+      { name: "Meerut", pop: 3443689, gen: 0 },
+      { name: "Mathura", pop: 2547184, gen: 0 },
+      { name: "Gautam Buddha Nagar", pop: 1648115, gen: 0 }
+    ];
+
+    // TAB SWITCHING
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+      
+      event.target.classList.add('active');
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+    }
+
+    // RENDER SCORECARD TABLE
+    function renderScorecardTable() {
+      const tbody = document.getElementById('scorecardTableBody');
+      tbody.innerHTML = '';
+      scorecardData.forEach(row => {
+        const badgeClass = row.score >= 10 ? 'badge-success' : (row.score > 0 ? 'badge-warning' : 'badge-critical');
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${row.name}</strong></td>
+            <td>${row.weight.toFixed(1)}</td>
+            <td>${row.benchmark.toFixed(1)}</td>
+            <td>${row.achieved.toFixed(1)}</td>
+            <td><span class="badge ${badgeClass}">${row.score.toFixed(1)}</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    // RENDER DISTRICT TABLE
+    function renderDistrictTable() {
+      const tbody = document.getElementById('districtTableBody');
+      tbody.innerHTML = '';
+      districtData.forEach(d => {
+        tbody.innerHTML += `
+          <tr>
+            <td><strong>${d.name}</strong></td>
+            <td>${d.pop.toLocaleString()}</td>
+            <td>Category Breakdown Pending</td>
+            <td>CPCB NGT Report 2025</td>
+          </tr>
+        `;
+      });
+    }
+
+    // SCORECARD CHART
+    let scorecardChart;
+    function initScorecardChart() {
+      const ctx = document.getElementById('scorecardChart').getContext('2d');
+      scorecardChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: scorecardData.map(d => `Pillar ${d.id}`),
+          datasets: [
+            {
+              label: 'Max Weight',
+              data: scorecardData.map(d => d.weight),
+              backgroundColor: '#30231e',
+              borderColor: '#84716b',
+              borderWidth: 1
+            },
+            {
+              label: 'Score Earned',
+              data: scorecardData.map(d => d.score),
+              backgroundColor: '#f8b89f',
+              borderColor: '#e9aa92',
+              borderWidth: 1
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { labels: { color: '#f9e0d8' } }
+          },
+          scales: {
+            x: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } },
+            y: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } }
+          }
+        }
+      });
+    }
+
+    // DISTRICT CHART
+    function initDistrictChart() {
+      const ctx = document.getElementById('districtChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: districtData.slice(0, 7).map(d => d.name),
+          datasets: [{
+            label: 'Population (Impact Scale)',
+            data: districtData.slice(0, 7).map(d => d.pop),
+            backgroundColor: '#764634',
+            borderColor: '#f8b89f',
+            borderWidth: 1
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          plugins: { legend: { labels: { color: '#f9e0d8' } } },
+          scales: {
+            x: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } },
+            y: { ticks: { color: '#bca79f' }, grid: { color: '#281d19' } }
+          }
+        }
+      });
+    }
+
+    // RE-CALCULATE SCORE IN SIMULATOR
+    function recalculateScore() {
+      const t6 = parseFloat(document.getElementById('sim-target-6').value) || 1.0;
+      const t7 = parseFloat(document.getElementById('sim-target-7').value) || 20.0;
+      
+      const s6 = (0.5 / t6) * 10.0;
+      const s7 = (1.0 / t7) * 10.0;
+      
+      scorecardData[5].score = Math.min(10.0, s6);
+      scorecardData[6].score = Math.min(10.0, s7);
+
+      document.getElementById('sim-score-6').innerText = `+${s6.toFixed(1)} Score`;
+      document.getElementById('sim-score-7').innerText = `+${s7.toFixed(1)} Score`;
+
+      const totalScore = scorecardData.reduce((acc, curr) => acc + curr.score, 0);
+      document.getElementById('headerScoreDisplay').innerText = totalScore.toFixed(1);
+      document.getElementById('kpiScore').innerText = `${totalScore.toFixed(1)} / 100`;
+
+      renderScorecardTable();
+      if(scorecardChart) {
+        scorecardChart.data.datasets[1].data = scorecardData.map(d => d.score);
+        scorecardChart.update();
+      }
+    }
+
+    // LOAD REPORT MD IN TAB REPORT
+    async function loadReport() {
+      try {
+        const res = await fetch('REPORT.md');
+        if (res.ok) {
+          const text = await res.text();
+          // Convert simple markdown into html tags
+          let html = text
+            .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+            .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+            .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\*(.*?)\*/g, '<em>$1</em>')
+            .replace(/```([\s\S]*?)```/g, '<blockquote style="font-family:monospace; white-space:pre-wrap;">$1</blockquote>')
+            .replace(/\n\n/g, '<br><br>');
+          document.getElementById('reportRenderArea').innerHTML = html;
+        }
+      } catch(e) {
+        document.getElementById('reportRenderArea').innerHTML = '<p>Could not load REPORT.md file directly.</p>';
+      }
+    }
+
+    // ON LOAD INITIALIZATION
+    window.addEventListener('DOMContentLoaded', () => {
+      renderScorecardTable();
+      renderDistrictTable();
+      initScorecardChart();
+      initDistrictChart();
+      loadReport();
+    });
+  </script>
+</body>
+</html>
