@@ -31,8 +31,8 @@ jobs:
         run: |
           mkdir -p dist
           cp index.html dist/
-          cp REPORT.md dist/
-          cp report2.md dist/
+          cp UP_EWaste_Research_Report_Revised.md dist/
+          cp UP_EWaste_Research_Report.pdf dist/
           cp State_EWaste_Tracker_Final.xlsx dist/
           cp -r css dist/
           cp -r js dist/
