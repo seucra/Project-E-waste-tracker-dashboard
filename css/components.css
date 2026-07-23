@@ -320,3 +320,19 @@
   color: var(--accent-secondary);
 }
 
+/* KaTeX Math Formulas */
+.katex {
+  font-size: 1.05em;
+}
+
+.katex-display {
+  background: var(--bg-container-high);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1.25rem;
+  margin: 1.25rem 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+

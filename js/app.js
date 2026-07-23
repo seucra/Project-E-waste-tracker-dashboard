@@ -64,6 +64,24 @@ function filterDistricts(query) {
   renderDistrictTable(query);
 }
 
+function renderMath(container = document.body) {
+  if (window.renderMathInElement) {
+    try {
+      window.renderMathInElement(container, {
+        delimiters: [
+          {left: '$$', right: '$$', display: true},
+          {left: '$', right: '$', display: false},
+          {left: '\\(', right: '\\)', display: false},
+          {left: '\\[', right: '\\]', display: true}
+        ],
+        throwOnError: false
+      });
+    } catch(e) {
+      console.warn('Math rendering error:', e);
+    }
+  }
+}
+
 function formatInline(str) {
   return str
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -81,11 +99,6 @@ async function loadMarkdownFile(filename, elementId) {
       let text = await res.text();
       // Remove YAML frontmatter if present
       text = text.replace(/^---[\s\S]*?---\s*/, '');
-
-      // Parse Math blocks ($$ ... $$)
-      text = text.replace(/\$\$([\s\S]*?)\$\$/g, '<div class="math-block">$1</div>');
-      // Parse inline Math ($ ... $)
-      text = text.replace(/\$([^\$\n]+)\$/g, '<span class="math-inline">$1</span>');
 
       const lines = text.split('\n');
       let html = '';
@@ -175,6 +188,7 @@ async function loadMarkdownFile(filename, elementId) {
       if (inList) html += '</ul>';
 
       area.innerHTML = html;
+      renderMath(area);
     } else {
       area.innerHTML = `<p style="color:var(--accent-primary)">Could not load ${filename} file directly.</p>`;
     }
@@ -198,6 +212,7 @@ function printReportArea(elementId, title) {
     <html>
       <head>
         <title>${title}</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
         <style>
           body { font-family: sans-serif; padding: 20px; color: #111; line-height: 1.6; }
           h1, h2, h3 { color: #871f21; border-bottom: 1px solid #ccc; }
@@ -205,7 +220,7 @@ function printReportArea(elementId, title) {
           th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
           th { background: #f4f4f4; color: #871f21; }
           blockquote { background: #f4f4f4; padding: 10px; border-left: 4px solid #871f21; }
-          .math-block { background: #f9f9f9; padding: 10px; font-family: monospace; border: 1px solid #ddd; }
+          .katex-display { margin: 1em 0; overflow-x: auto; }
         </style>
       </head>
       <body>${reportContent}</body>
@@ -230,5 +245,6 @@ window.addEventListener('DOMContentLoaded', () => {
   initDistrictChart();
   loadReport();
   loadAuditReport();
+  renderMath(document.body);
 });
 
