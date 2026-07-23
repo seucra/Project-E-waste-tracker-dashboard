@@ -41,6 +41,9 @@
           <div class="score-value" id="headerScoreDisplay">20.5</div>
         </div>
 
+        <a href="UP_EWaste_Research_Report.pdf" class="btn btn-secondary" target="_blank" download style="margin-right:0.5rem">
+          📄 PDF Report
+        </a>
         <a href="State_EWaste_Tracker_Final.xlsx" class="btn btn-primary" download>
           📥 Raw Excel
         </a>
@@ -87,8 +90,8 @@
       <button class="tab-btn" onclick="switchTab('recycling', event)">🏭 3. Recycling Units</button>
       <button class="tab-btn" onclick="switchTab('compliance', event)">⚖️ 4. Compliance & EPR</button>
       <button class="tab-btn" onclick="switchTab('informal', event)">⚠️ 5 & 6. Informal & Env Safeguards</button>
-      <button class="tab-btn" onclick="switchTab('report', event)">📄 Executive Analytical Report</button>
-      <button class="tab-btn" onclick="switchTab('audit', event)">🧮 Score Math Proof (report2.md)</button>
+      <button class="tab-btn" onclick="switchTab('report', event)">📄 Executive Research Report</button>
+      <button class="tab-btn" onclick="switchTab('audit', event)">🧮 Score Math Proof & Audit</button>
     </div>
 
     <!-- TAB 0: SCORECARD & TARGET SIMULATOR -->
@@ -131,7 +134,7 @@
       <div class="card" style="background:var(--bg-container-high); border-color:var(--accent-primary-container);">
         <div class="card-header">
           <div class="card-title" style="color:var(--accent-primary)">❓ Factual Audit: How 20.5 is Calculated & The 80% Collection Paradox</div>
-          <button class="btn btn-secondary" onclick="switchTab('audit', event)">View Complete Math Proof (report2.md)</button>
+          <button class="btn btn-secondary" onclick="switchTab('audit', event)">View Complete Math Proof & Audit</button>
         </div>
         <div style="font-size:0.85rem; line-height:1.6; color:var(--text-primary)">
           <p style="margin-bottom:0.75rem">
@@ -377,8 +380,11 @@
     <div id="tab-report" class="tab-content">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">📄 Executive Analytical Report (REPORT.md)</div>
-          <button class="btn btn-primary" onclick="printReport()">🖨️ Print / Save PDF</button>
+          <div class="card-title">📄 Executive Research & Analytical Report (UP_EWaste_Research_Report_Revised.md)</div>
+          <div>
+            <a href="UP_EWaste_Research_Report.pdf" target="_blank" download class="btn btn-secondary" style="margin-right:0.5rem">📥 Download PDF Report</a>
+            <button class="btn btn-primary" onclick="printReport()">🖨️ Print / Save View</button>
+          </div>
         </div>
         <div class="report-box" id="reportRenderArea">
           <h2>Loading Executive Report...</h2>
@@ -386,21 +392,25 @@
       </div>
     </div>
 
-    <!-- TAB 7: AUDIT & MATH PROOF REPORT (report2.md) -->
+    <!-- TAB 7: AUDIT & MATH PROOF REPORT -->
     <div id="tab-audit" class="tab-content">
       <div class="card">
         <div class="card-header">
-          <div class="card-title">🧮 Score Math Proof & Collection Paradox Report (report2.md)</div>
-          <button class="btn btn-primary" onclick="printAuditReport()">🖨️ Print Audit PDF</button>
+          <div class="card-title">🧮 Data Validation & Score Math Proof Audit (UP_EWaste_Research_Report_Revised.md)</div>
+          <div>
+            <a href="UP_EWaste_Research_Report.pdf" target="_blank" download class="btn btn-secondary" style="margin-right:0.5rem">📥 Download PDF Report</a>
+            <button class="btn btn-primary" onclick="printAuditReport()">🖨️ Print Audit View</button>
+          </div>
         </div>
         <div class="report-box" id="auditReportRenderArea">
           <h2>Loading Audit Report...</h2>
+        </div>
       </div>
     </div>
 
-    <!-- Footer with Single Author Credit & Hidden AI Mark -->
+    <!-- Footer with Author Credit & Hidden AI Mark -->
     <footer style="margin-top: 2rem; padding: 1.5rem; text-align: center; border-top: 1px solid var(--border-color); color: var(--text-secondary); font-size: 0.85rem;">
-      <p style="margin-bottom: 0.3rem;">Project Developed & Managed by <strong>S. T. Ahmed</strong></p>
+      <p style="margin-bottom: 0.3rem;">Project Developed & Managed by <strong>Khan Rayed, S. T. Ahmed, Abaan Mhaisker</strong></p>
       <p style="font-size: 0.75rem; color: var(--text-muted);">State E-Waste Telemetry & Analytics Platform © 2026</p>
       
       <!-- Easter Egg: Hidden AI Mark -->

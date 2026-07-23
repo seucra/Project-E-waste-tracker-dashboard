@@ -64,34 +64,131 @@ function filterDistricts(query) {
   renderDistrictTable(query);
 }
 
+function formatInline(str) {
+  return str
+    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+    .replace(/\*(.*?)\*/g, '<em>$1</em>')
+    .replace(/`([^`]+)`/g, '<code>$1</code>')
+    .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--accent-secondary); text-decoration:underline;">$1</a>');
+}
+
 async function loadMarkdownFile(filename, elementId) {
   const area = document.getElementById(elementId);
   if (!area) return;
   try {
     const res = await fetch(filename);
     if (res.ok) {
-      const text = await res.text();
-      let html = text
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/```([\s\S]*?)```/g, '<blockquote style="font-family:monospace; white-space:pre-wrap;">$1</blockquote>')
-        .replace(/\n\n/g, '<br><br>');
+      let text = await res.text();
+      // Remove YAML frontmatter if present
+      text = text.replace(/^---[\s\S]*?---\s*/, '');
+
+      // Parse Math blocks ($$ ... $$)
+      text = text.replace(/\$\$([\s\S]*?)\$\$/g, '<div class="math-block">$1</div>');
+      // Parse inline Math ($ ... $)
+      text = text.replace(/\$([^\$\n]+)\$/g, '<span class="math-inline">$1</span>');
+
+      const lines = text.split('\n');
+      let html = '';
+      let inTable = false;
+      let inList = false;
+
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i].trim();
+
+        // Table row check
+        if (line.startsWith('|') && line.endsWith('|')) {
+          if (/^\|[\s\-:|]+\|$/.test(line)) {
+            continue;
+          }
+          const cells = line.split('|').slice(1, -1).map(c => c.trim());
+          if (!inTable) {
+            inTable = true;
+            html += '<table><thead><tr>';
+            cells.forEach(c => { html += `<th>${formatInline(c)}</th>`; });
+            html += '</tr></thead><tbody>';
+          } else {
+            html += '<tr>';
+            cells.forEach(c => { html += `<td>${formatInline(c)}</td>`; });
+            html += '</tr>';
+          }
+          continue;
+        } else if (inTable) {
+          inTable = false;
+          html += '</tbody></table>';
+        }
+
+        // Headings
+        if (/^#\s+(.*)/.test(line)) {
+          html += `<h1>${formatInline(line.replace(/^#\s+/, ''))}</h1>`;
+          continue;
+        }
+        if (/^##\s+(.*)/.test(line)) {
+          html += `<h2>${formatInline(line.replace(/^##\s+/, ''))}</h2>`;
+          continue;
+        }
+        if (/^###\s+(.*)/.test(line)) {
+          html += `<h3>${formatInline(line.replace(/^###\s+/, ''))}</h3>`;
+          continue;
+        }
+        if (/^####\s+(.*)/.test(line)) {
+          html += `<h4>${formatInline(line.replace(/^####\s+/, ''))}</h4>`;
+          continue;
+        }
+
+        // Blockquote
+        if (line.startsWith('>')) {
+          html += `<blockquote>${formatInline(line.replace(/^>\s*/, ''))}</blockquote>`;
+          continue;
+        }
+
+        // Horizontal rule
+        if (/^---$|^\*\*\*$|^___$/.test(line)) {
+          html += '<hr style="border:0; border-top:1px solid var(--border-color); margin:1.5rem 0;">';
+          continue;
+        }
+
+        // Empty line
+        if (line === '') {
+          if (inList) {
+            html += '</ul>';
+            inList = false;
+          }
+          html += '<br>';
+          continue;
+        }
+
+        // Bullet lists
+        if (/^[\-\*]\s+(.*)/.test(line)) {
+          if (!inList) {
+            inList = true;
+            html += '<ul>';
+          }
+          html += `<li>${formatInline(line.replace(/^[\-\*]\s+/, ''))}</li>`;
+          continue;
+        }
+
+        // Paragraph
+        html += `<p>${formatInline(line)}</p>`;
+      }
+
+      if (inTable) html += '</tbody></table>';
+      if (inList) html += '</ul>';
+
       area.innerHTML = html;
+    } else {
+      area.innerHTML = `<p style="color:var(--accent-primary)">Could not load ${filename} file directly.</p>`;
     }
   } catch(e) {
-    area.innerHTML = `<p>Could not load ${filename} file directly.</p>`;
+    area.innerHTML = `<p style="color:var(--accent-primary)">Error loading ${filename}: ${e.message}</p>`;
   }
 }
 
 async function loadReport() {
-  await loadMarkdownFile('REPORT.md', 'reportRenderArea');
+  await loadMarkdownFile('UP_EWaste_Research_Report_Revised.md', 'reportRenderArea');
 }
 
 async function loadAuditReport() {
-  await loadMarkdownFile('report2.md', 'auditReportRenderArea');
+  await loadMarkdownFile('UP_EWaste_Research_Report_Revised.md', 'auditReportRenderArea');
 }
 
 function printReportArea(elementId, title) {
@@ -104,7 +201,11 @@ function printReportArea(elementId, title) {
         <style>
           body { font-family: sans-serif; padding: 20px; color: #111; line-height: 1.6; }
           h1, h2, h3 { color: #871f21; border-bottom: 1px solid #ccc; }
+          table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+          th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+          th { background: #f4f4f4; color: #871f21; }
           blockquote { background: #f4f4f4; padding: 10px; border-left: 4px solid #871f21; }
+          .math-block { background: #f9f9f9; padding: 10px; font-family: monospace; border: 1px solid #ddd; }
         </style>
       </head>
       <body>${reportContent}</body>
@@ -115,11 +216,11 @@ function printReportArea(elementId, title) {
 }
 
 function printReport() {
-  printReportArea('reportRenderArea', 'Uttar Pradesh E-Waste Executive Report');
+  printReportArea('reportRenderArea', 'Uttar Pradesh E-Waste Executive Research Report');
 }
 
 function printAuditReport() {
-  printReportArea('auditReportRenderArea', 'Uttar Pradesh E-Waste Audit & Math Proof Report');
+  printReportArea('auditReportRenderArea', 'Uttar Pradesh E-Waste Data Validation & Score Math Proof');
 }
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -130,3 +231,4 @@ window.addEventListener('DOMContentLoaded', () => {
   loadReport();
   loadAuditReport();
 });
+

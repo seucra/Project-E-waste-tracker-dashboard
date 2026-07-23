@@ -267,3 +267,56 @@
   border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
   overflow-x: auto;
 }
+
+.report-box table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.25rem 0;
+  font-size: 0.85rem;
+}
+
+.report-box th, .report-box td {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.report-box th {
+  background: var(--bg-container-high);
+  color: var(--accent-primary);
+  font-weight: 600;
+}
+
+.report-box tr:nth-child(even) {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.report-box code {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg-container-high);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  color: var(--accent-secondary);
+  font-size: 0.85em;
+}
+
+.report-box .math-block {
+  background: var(--bg-container-high);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--accent-secondary);
+  overflow-x: auto;
+  text-align: center;
+}
+
+.report-box .math-inline {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--bg-container-high);
+  padding: 0.1rem 0.35rem;
+  border-radius: 4px;
+  color: var(--accent-secondary);
+}
+
