@@ -64,7 +64,7 @@ function filterDistricts(query) {
   renderDistrictTable(query);
 }
 
-function renderMath(container = document.body) {
+function renderMath(container = document.body, retries = 5) {
   if (window.renderMathInElement) {
     try {
       window.renderMathInElement(container, {
@@ -74,11 +74,14 @@ function renderMath(container = document.body) {
           {left: '\\(', right: '\\)', display: false},
           {left: '\\[', right: '\\]', display: true}
         ],
+        ignoredTags: ["script", "noscript", "style", "textarea", "pre"],
         throwOnError: false
       });
     } catch(e) {
       console.warn('Math rendering error:', e);
     }
+  } else if (retries > 0) {
+    setTimeout(() => renderMath(container, retries - 1), 250);
   }
 }
 
@@ -90,110 +93,146 @@ function formatInline(str) {
     .replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" style="color:var(--accent-secondary); text-decoration:underline;">$1</a>');
 }
 
+function parseMarkdownWithMath(text) {
+  if (!text) return '';
+  text = text.replace(/^---[\s\S]*?---\s*/, '');
+
+  const mathTokens = [];
+  
+  // Protect display math ($$ ... $$)
+  text = text.replace(/\$\$([\s\S]*?)\$\$/g, (match) => {
+    mathTokens.push(match);
+    return `___MATH_BLOCK_${mathTokens.length - 1}___`;
+  });
+
+  // Protect inline math ($ ... $)
+  text = text.replace(/\$([^\$\n]+)\$/g, (match) => {
+    mathTokens.push(match);
+    return `___MATH_INLINE_${mathTokens.length - 1}___`;
+  });
+
+  const lines = text.split('\n');
+  let html = '';
+  let inTable = false;
+  let inList = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i].trim();
+
+    // Table row check
+    if (line.startsWith('|') && line.endsWith('|')) {
+      if (/^\|[\s\-:|]+\|$/.test(line)) {
+        continue;
+      }
+      const cells = line.split('|').slice(1, -1).map(c => c.trim());
+      if (!inTable) {
+        inTable = true;
+        html += '<table><thead><tr>';
+        cells.forEach(c => { html += `<th>${formatInline(c)}</th>`; });
+        html += '</tr></thead><tbody>';
+      } else {
+        html += '<tr>';
+        cells.forEach(c => { html += `<td>${formatInline(c)}</td>`; });
+        html += '</tr>';
+      }
+      continue;
+    } else if (inTable) {
+      inTable = false;
+      html += '</tbody></table>';
+    }
+
+    // Headings
+    if (/^#\s+(.*)/.test(line)) {
+      html += `<h1>${formatInline(line.replace(/^#\s+/, ''))}</h1>`;
+      continue;
+    }
+    if (/^##\s+(.*)/.test(line)) {
+      html += `<h2>${formatInline(line.replace(/^##\s+/, ''))}</h2>`;
+      continue;
+    }
+    if (/^###\s+(.*)/.test(line)) {
+      html += `<h3>${formatInline(line.replace(/^###\s+/, ''))}</h3>`;
+      continue;
+    }
+    if (/^####\s+(.*)/.test(line)) {
+      html += `<h4>${formatInline(line.replace(/^####\s+/, ''))}</h4>`;
+      continue;
+    }
+
+    // Blockquote
+    if (line.startsWith('>')) {
+      html += `<blockquote>${formatInline(line.replace(/^>\s*/, ''))}</blockquote>`;
+      continue;
+    }
+
+    // Horizontal rule
+    if (/^---$|^\*\*\*$|^___$/.test(line)) {
+      html += '<hr style="border:0; border-top:1px solid var(--border-color); margin:1.5rem 0;">';
+      continue;
+    }
+
+    // Empty line
+    if (line === '') {
+      if (inList) {
+        html += '</ul>';
+        inList = false;
+      }
+      html += '<br>';
+      continue;
+    }
+
+    // Bullet lists
+    if (/^[\-\*]\s+(.*)/.test(line)) {
+      if (!inList) {
+        inList = true;
+        html += '<ul>';
+      }
+      html += `<li>${formatInline(line.replace(/^[\-\*]\s+/, ''))}</li>`;
+      continue;
+    }
+
+    // Paragraph
+    html += `<p>${formatInline(line)}</p>`;
+  }
+
+  if (inTable) html += '</tbody></table>';
+  if (inList) html += '</ul>';
+
+  // Restore protected math tokens
+  mathTokens.forEach((token, index) => {
+    if (token.startsWith('$$')) {
+      html = html.replace(`___MATH_BLOCK_${index}___`, token);
+    } else {
+      html = html.replace(`___MATH_INLINE_${index}___`, token);
+    }
+  });
+
+  return html;
+}
+
 async function loadMarkdownFile(filename, elementId) {
   const area = document.getElementById(elementId);
   if (!area) return;
+
+  let rawText = '';
   try {
     const res = await fetch(filename);
     if (res.ok) {
-      let text = await res.text();
-      // Remove YAML frontmatter if present
-      text = text.replace(/^---[\s\S]*?---\s*/, '');
-
-      const lines = text.split('\n');
-      let html = '';
-      let inTable = false;
-      let inList = false;
-
-      for (let i = 0; i < lines.length; i++) {
-        let line = lines[i].trim();
-
-        // Table row check
-        if (line.startsWith('|') && line.endsWith('|')) {
-          if (/^\|[\s\-:|]+\|$/.test(line)) {
-            continue;
-          }
-          const cells = line.split('|').slice(1, -1).map(c => c.trim());
-          if (!inTable) {
-            inTable = true;
-            html += '<table><thead><tr>';
-            cells.forEach(c => { html += `<th>${formatInline(c)}</th>`; });
-            html += '</tr></thead><tbody>';
-          } else {
-            html += '<tr>';
-            cells.forEach(c => { html += `<td>${formatInline(c)}</td>`; });
-            html += '</tr>';
-          }
-          continue;
-        } else if (inTable) {
-          inTable = false;
-          html += '</tbody></table>';
-        }
-
-        // Headings
-        if (/^#\s+(.*)/.test(line)) {
-          html += `<h1>${formatInline(line.replace(/^#\s+/, ''))}</h1>`;
-          continue;
-        }
-        if (/^##\s+(.*)/.test(line)) {
-          html += `<h2>${formatInline(line.replace(/^##\s+/, ''))}</h2>`;
-          continue;
-        }
-        if (/^###\s+(.*)/.test(line)) {
-          html += `<h3>${formatInline(line.replace(/^###\s+/, ''))}</h3>`;
-          continue;
-        }
-        if (/^####\s+(.*)/.test(line)) {
-          html += `<h4>${formatInline(line.replace(/^####\s+/, ''))}</h4>`;
-          continue;
-        }
-
-        // Blockquote
-        if (line.startsWith('>')) {
-          html += `<blockquote>${formatInline(line.replace(/^>\s*/, ''))}</blockquote>`;
-          continue;
-        }
-
-        // Horizontal rule
-        if (/^---$|^\*\*\*$|^___$/.test(line)) {
-          html += '<hr style="border:0; border-top:1px solid var(--border-color); margin:1.5rem 0;">';
-          continue;
-        }
-
-        // Empty line
-        if (line === '') {
-          if (inList) {
-            html += '</ul>';
-            inList = false;
-          }
-          html += '<br>';
-          continue;
-        }
-
-        // Bullet lists
-        if (/^[\-\*]\s+(.*)/.test(line)) {
-          if (!inList) {
-            inList = true;
-            html += '<ul>';
-          }
-          html += `<li>${formatInline(line.replace(/^[\-\*]\s+/, ''))}</li>`;
-          continue;
-        }
-
-        // Paragraph
-        html += `<p>${formatInline(line)}</p>`;
-      }
-
-      if (inTable) html += '</tbody></table>';
-      if (inList) html += '</ul>';
-
-      area.innerHTML = html;
-      renderMath(area);
-    } else {
-      area.innerHTML = `<p style="color:var(--accent-primary)">Could not load ${filename} file directly.</p>`;
+      rawText = await res.text();
     }
   } catch(e) {
-    area.innerHTML = `<p style="color:var(--accent-primary)">Error loading ${filename}: ${e.message}</p>`;
+    console.warn(`Fetch error for ${filename}, attempting embedded fallback:`, e);
+  }
+
+  if (!rawText && typeof embeddedReportMarkdown !== 'undefined') {
+    rawText = embeddedReportMarkdown;
+  }
+
+  if (rawText) {
+    area.innerHTML = parseMarkdownWithMath(rawText);
+    renderMath(area);
+  } else {
+    area.innerHTML = `<p style="color:var(--accent-primary)">Could not load ${filename}.</p>`;
   }
 }
 
@@ -247,4 +286,5 @@ window.addEventListener('DOMContentLoaded', () => {
   loadAuditReport();
   renderMath(document.body);
 });
+
 
